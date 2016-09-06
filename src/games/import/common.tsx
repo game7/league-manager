@@ -25,7 +25,7 @@ export interface Column {
   property?: string;
 }
 
-interface Map {
+export interface Map {
   key: string;
   id?: number;
   name?: string;

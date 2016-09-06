@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
-import { IImportState, Back, Next, row, storage, Column, PROPERTIES } from './common';
+import { IImportState, Back, Next, row, storage, Map, Column, PROPERTIES } from './common';
 
 export function makeColumns(row: row): Column[] {
   return row.map(col => {
@@ -11,13 +11,32 @@ export function makeColumns(row: row): Column[] {
   }) as Column[];
 }
 
-export default class Data extends Component<{},IImportState> {
+export function makeTeams(columns: Column[], rows: row[]): Map[] {
+  const positions = columns.filter(col => col.property == 'Home Team' || col.property == 'Away Team')
+                           .map(col => columns.indexOf(col));
+  const all = rows.map(row => positions.map(p => row[p])).reduce((prev, curr) => prev.concat(curr));
+  debugger;
+  return _.uniq(all).map(value => {
+    return {
+      key: value
+    } as Map
+  });
+}
+
+export function makeLocations(): Map[] {
+  return []
+}
+
+export default class Mapping extends Component<{},IImportState> {
 
   constructor() {
     super();
     this.state = Object.assign({}, storage.load());
-    if(!this.state.columns) {
-      this.state.columns = makeColumns(this.state.rows[0])
+    if(!this.state.teams) {
+      this.state.teams = makeTeams(this.state.columns, this.state.rows);
+    }
+    if(!this.state.locations) {
+      this.state.locations = makeLocations();
     }
   }
 
@@ -72,7 +91,7 @@ export default class Data extends Component<{},IImportState> {
           </tbody>
         </table>
         <hr/>
-        <Back to="/games/import/data"/>
+        <Back to="/games/import/columns"/>
         {" "}
         <Next
           disabled={this.canMoveNext}

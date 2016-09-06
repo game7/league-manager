@@ -4,6 +4,7 @@ import { Route, IndexRoute } from 'react-router';
 import File from './file';
 import Data from './data';
 import Columns from './columns';
+import Mapping from './mapping';
 
 class Layout extends React.Component<any, any> {
   render() {
@@ -21,6 +22,7 @@ const routes = (
     <IndexRoute component={File}/>
     <Route path="data" component={Data}/>
     <Route path="columns" component={Columns}/>
+    <Route path="mapping" component={Mapping}/>
   </Route>
 );
 
