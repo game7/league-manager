@@ -8,6 +8,7 @@ function exec(command) {
 }
 
 exec("npm run build");
+exec("cp 404.html build")
 exec("git checkout -B gh-pages");
 exec("git add -f build");
 exec("git commit -a  -m 'rebuild-website'");
