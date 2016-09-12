@@ -7,9 +7,9 @@ import App from './app';
 import { default as games } from './games';
 
 export default () => (
-  <Router history={browserHistory}>
+  <Router history={hashHistory}>
     <Route path="/" component={App}>
-      <IndexRedirect to="/games" />    
+      <IndexRedirect to="/games" />
       {games}
     </Route>
   </Router>
