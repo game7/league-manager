@@ -26,7 +26,6 @@ ReactDOM.render(
 );
 
 if (module.hot) {
-  console.log('module.hot');
   module.hot.accept('./router', () => {
     const NextRouter = require('./router').default;
     console.log('next router')

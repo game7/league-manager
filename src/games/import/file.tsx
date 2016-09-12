@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import { Link } from 'react-router';
-import { IImportState, Back, Next, storage } from './common';
+import { IImportState, Header, storage } from './common';
 
 export default class File extends Component<{},IImportState> {
 
@@ -35,40 +35,31 @@ export default class File extends Component<{},IImportState> {
       hasHeader: undefined,
       rows: undefined,
       filename: undefined,
-      columns: undefined,
-      teams: undefined,
-      locations: undefined
+      columns: undefined
     }, () => storage.save(this.state));
 
   }
 
   get canMoveNext(): boolean {
-    return !this.state.file;
-  }
-
-  file() {
-    if(this.state.file) {
-      return (
-        <div>
-          <h3>File</h3>
-          <div className="form-group">
-            <input className="form-control" disabled value={this.state.file.name} />
-          </div>
-          <pre>{this.state.file.content}</pre>
-        </div>
-      );
-    }
+    return !!this.state.file;
   }
 
   render() {
     return (
       <div>
+        <Header
+          title="File"
+          canBack={true}
+          backUrl="/games/import"
+          canNext={this.canMoveNext}
+          nextUrl="/games/import/data"
+        />
         <div style={{display: 'none'}}>
-        <input type="file"
-          ref={(ref) => this.fileInput = ref}
-          onChange={this.handleFileSelect}></input>
+          <input type="file"
+            ref={(ref) => this.fileInput = ref}
+            onChange={this.handleFileSelect}></input>
         </div>
-        <div>
+        <div className="form-group">
           <button
             className="btn btn-default"
             onClick={() => this.fileInput.click()}>
@@ -78,18 +69,18 @@ export default class File extends Component<{},IImportState> {
           {" "}
           <button
             className="btn btn-default"
+            style={{display: 'none'}}
             onClick={this.handleStartOver}>
             <i className="fa fa-refresh"/>
             {" "}Start Over
           </button>
         </div>
-        <hr/>
-        <Back disabled={true}/>
-        {" "}
-        <Next
-          disabled={this.canMoveNext}
-          to="/games/import/data"/>
-        {this.file()}
+        <div>
+          <div className="form-group">
+            <input className="form-control" disabled value={this.state.file ? this.state.file.name : ''} />
+          </div>
+          <pre style={{minHeight: 100}}>{this.state.file ? this.state.file.content : ''}</pre>
+        </div>
       </div>
     );
   }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
-import { IImportState, Back, Next, row, storage } from './common';
+import { IImportState, Header, row, storage } from './common';
 
 const delimiters = [',', '|', '\t'];
 
@@ -28,50 +28,26 @@ export default class Data extends Component<{},IImportState> {
 
   handleHeaderRowChange = (event) => {
     this.setState({
-      hasHeader: event.target.checked
+      hasHeader: event.target.checked,
+      teamMaps: undefined,
+      locationMaps: undefined
     }, () => storage.save(this.state))
   }
 
   get canMoveNext(): boolean {
-    return !this.state.rows;
+    return !!this.state.rows;
   }
-  //
-  // handleColumnChange = (key: string) => (event: any) => {
-  //   const value = event.target.value;
-  //   const state = Object.assign({}, this.state);
-  //   const columns = state.columns.map((column, i) => {
-  //     if (column.key == key) {
-  //       column.value = value;
-  //       this.prepareColumnLookups(key, i);
-  //     }
-  //     return column;
-  //   })
-  //   this.setState({ columns: columns });
-  // }
-  //
-  // prepareColumnLookups = (property: string, index: number) => {
-  //   switch(property) {
-  //     case 'Home Team':
-  //     case 'Away Team':
-  //
-  //       break;
-  //     case 'Location':
-  //       this.prepareLocationLookups(index);
-  //       break;
-  //   }
-  // }
-  //
-  // prepareLocationLookups = (index: number) => {
-  //   const rows = this.state.rows;
-  //   const all = rows.map(row => row[index]);
-  //   const uniq = _.uniq(all) as string[];
-  //   const locations = uniq.map(item => ({ key: item }));
-  //   this.setState({ locations: locations });
-  // }
 
   render() {
     return (
       <div>
+        <Header
+          title="File"
+          canBack={true}
+          backUrl="/games/import/file"
+          canNext={this.canMoveNext}
+          nextUrl="/games/import/columns"
+        />
         <div className="form-group">
           <div className="checkbox">
             <label>
@@ -80,13 +56,6 @@ export default class Data extends Component<{},IImportState> {
             </label>
           </div>
         </div>
-        <hr/>
-        <Back to="/games/import"/>
-        {" "}
-        <Next
-          disabled={this.canMoveNext}
-          to="/games/import/columns"/>
-        <hr/>
         <Rows data={this.state.rows} hasHeader={this.state.hasHeader}/>
       </div>
     );
@@ -100,7 +69,7 @@ const Rows = ({data, hasHeader}) => {
   let header = hasHeader ? rows.splice(0, 1) : [];
   return (
     <table className="table table-bordered">
-      <Header data={header}/>
+      <TableHeader data={header}/>
       <tbody>
         {rows.map((row, i) => <Row data={row} key={i}/>)}
       </tbody>
@@ -108,7 +77,7 @@ const Rows = ({data, hasHeader}) => {
   )
 };
 
-const Header = ({data}) => (
+const TableHeader = ({data}) => (
   <thead>
     {data.map((row, i) => <HeaderRow data={row} key={i}/>)}
   </thead>

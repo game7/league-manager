@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router'
+import { League, Season, Division, Team, Location } from '../store';
 
 export type cell = string;
 export type row = cell[]
@@ -10,14 +11,22 @@ interface IFile {
 }
 
 export interface IImportState {
+  leagueId?: string,
+  seasonId?: string,
+  divisionId?: string,
   file?: IFile;
   delimiter?: string;
   hasHeader?: boolean;
   rows?: row[];
   filename?: string;
   columns? : Column[];
-  teams?: Map[];
-  locations?: Map[];
+  teamMaps?: Map[];
+  locationMaps?: Map[];
+  leagues?: League[];
+  seasons?: Season[];
+  divisions?: Division[];
+  teams?: Team[];
+  locations?: Location[];
 }
 
 export interface Column {
@@ -27,18 +36,18 @@ export interface Column {
 
 export interface Map {
   key: string;
-  id?: number;
+  id?: string;
   name?: string;
 }
 
-export const PROPERTIES = [
-  'Date',
-  'Time',
-  'Duration',
-  'Home Team',
-  'Away Team',
-  'Location',
-];
+export const Properties = {
+  date: 'Date',
+  time: 'Time',
+  duration: 'Duration',
+  homeTeam: 'Home Team',
+  awayTeam: 'Away Team',
+  location: 'Location'
+};
 
 export const storage = {
   save: (state: IImportState) => localStorage.setItem('import', JSON.stringify(state)),
@@ -62,5 +71,41 @@ export const Next = (props: { disabled?: boolean, to?: string }) => {
     <Link className={css.join(' ')} to={props.to || ""}>
       Next{" "}<i className="fa fa-chevron-right"/>
     </Link>
+  )
+}
+
+interface HeaderProps {
+  title: string;
+  canNext?: boolean;
+  nextUrl?: string;
+  canBack?: boolean;
+  backUrl?: string;
+}
+
+export const Header = (props: HeaderProps) => {
+  let styles = {
+    buttons: {
+      float: 'right'
+    },
+    clearfix: {
+      clear: 'both'
+    }
+  }
+  return (
+    <h1 className="page-header">
+      {props.title}
+      <div style={styles.buttons}>
+        <Back
+          disabled={!props.canBack}
+          to={props.backUrl}
+        />
+        {" "}
+        <Next
+          disabled={!props.canNext}
+          to={props.nextUrl}
+        />
+      </div>
+      <div style={styles.clearfix} />
+    </h1>
   )
 }

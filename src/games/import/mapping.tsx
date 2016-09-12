@@ -1,30 +1,29 @@
 import * as React from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
-import { IImportState, Back, Next, row, storage, Map, Column, PROPERTIES } from './common';
+import { IImportState, Header, row, storage, Map, Column } from './common';
+import { Store, Team, Location } from '../store';
 
-export function makeColumns(row: row): Column[] {
-  return row.map(col => {
-    return {
-      pattern: col
-    }
-  }) as Column[];
-}
 
-export function makeTeams(columns: Column[], rows: row[]): Map[] {
-  const positions = columns.filter(col => col.property == 'Home Team' || col.property == 'Away Team')
-                           .map(col => columns.indexOf(col));
+export function makeTeamMaps(columns: Column[], rows: row[], hasHeader: boolean): Map[] {
+  if(hasHeader) [ , ...rows] = rows;
+  const positions = [
+    columns.findIndex(col => col.property == 'homeTeam'),
+    columns.findIndex(col => col.property == 'awayTeam')
+  ];
   const all = rows.map(row => positions.map(p => row[p])).reduce((prev, curr) => prev.concat(curr));
-  debugger;
-  return _.uniq(all).map(value => {
-    return {
-      key: value
-    } as Map
-  });
+  const uniq = _.uniq(all) as string[];
+  const maps = uniq.map(item => ({ key: item }));
+  return maps;
 }
 
-export function makeLocations(): Map[] {
-  return []
+export function makeLocationMaps(columns: Column[], rows: row[], hasHeader: boolean): Map[] {
+  if(hasHeader) [ , ...rows] = rows;
+  const index = columns.findIndex(col => col.property == 'location');
+  const all = rows.map(row => row[index]);
+  const uniq = _.uniq(all) as string[];
+  const maps = uniq.map(item => ({ key: item }));
+  return maps;
 }
 
 export default class Mapping extends Component<{},IImportState> {
@@ -32,85 +31,136 @@ export default class Mapping extends Component<{},IImportState> {
   constructor() {
     super();
     this.state = Object.assign({}, storage.load());
-    if(!this.state.teams) {
-      this.state.teams = makeTeams(this.state.columns, this.state.rows);
+    const { columns, rows, hasHeader } = this.state;
+    if(!this.state.teamMaps) {
+      this.state.teamMaps = makeTeamMaps(columns, rows, hasHeader);
     }
-    if(!this.state.locations) {
-      this.state.locations = makeLocations();
+    if(!this.state.locationMaps) {
+      this.state.locationMaps = makeLocationMaps(columns, rows, hasHeader);
     }
+  }
+
+  componentDidMount() {
+    Promise.all([
+      Store.teams(),
+      Store.locations()
+    ]).then(results => {
+      this.setStateAndSave({
+        teams: results[0],
+        locations: results[1]
+      });
+    });
   }
 
   get canMoveNext(): boolean {
-    const columns = (this.state.columns || []);
-    const columnCount = columns.length;
-    const mappedCount = columns.filter(col => !!col.property).length;
-    return columnCount == 0 || columnCount !== mappedCount;
+    const { teamMaps, locationMaps} = this.state;
+    const maps = [...teamMaps, ...locationMaps];
+    return maps.every(map => map.id && map.id != '');
   }
 
-  handleColumnChange = (key: string) => (event: any) => {
-    const value = event.target.value;
-    const state = Object.assign({}, this.state);
-    const columns = state.columns.map((column, i) => {
-      if (column.pattern == key) {
-        column.property = value;
-      }
-      return column;
+  setStateAndSave = (state: IImportState) => {
+    this.setState(state, () => {
+      storage.save(this.state);
     })
-    this.setState({ columns: columns }, () => storage.save(this.state));
   }
 
-  // prepareColumnLookups = (property: string, index: number) => {
-  //   switch(property) {
-  //     case 'Home Team':
-  //     case 'Away Team':
-  //
-  //       break;
-  //     case 'Location':
-  //       this.prepareLocationLookups(index);
-  //       break;
-  //   }
-  // }
-  //
-  // prepareLocationLookups = (index: number) => {
-  //   const rows = this.state.rows;
-  //   const all = rows.map(row => row[index]);
-  //   const uniq = _.uniq(all) as string[];
-  //   const locations = uniq.map(item => ({ key: item }));
-  //   this.setState({ locations: locations });
-  // }
+  handleTeamMapChange = (key: string) => (event: any) => {
+    const id = event.target.value;
+    const { name } = this.state.teams.filter(t => t.id == id)[0]
+    const maps = (Object.assign([], this.state.teamMaps) as Map[]).map(map => {
+      if(map.key == key) {
+        map.id = id;
+        map.name = name;
+      }
+      return map;
+    });
+    this.setState({ teamMaps: maps }, () => storage.save(this.state));
+  }
+
+  handleLocationMapChange = (key: string) => (event: any) => {
+    const id = event.target.value;
+    const { name } = this.state.locations.filter(l => l.id == id)[0]
+    const maps = (Object.assign([], this.state.locationMaps) as Map[]).map(map => {
+      if(map.key == key) {
+        map.id = id; 
+        map.name = name;
+      }
+      return map;
+    });
+    this.setState({ locationMaps: maps }, () => storage.save(this.state));
+  }
+
+  get teams(): Team[] {
+    const { teams, seasonId, divisionId } = Object.assign({}, this.state);
+    return teams.filter((team) => {
+      return team.seasonId == seasonId && team.divisionId == divisionId;
+    });
+  }
 
   render() {
-    console.log('render', new Date())
     return (
       <div>
-        <table className="table table-bordered">
-          <tbody>
-            {this.state.columns.map((col) => (
-              <Row column={col} key={col.pattern} onChange={this.handleColumnChange}/>
-            ))}
-          </tbody>
-        </table>
-        <hr/>
-        <Back to="/games/import/columns"/>
-        {" "}
-        <Next
-          disabled={this.canMoveNext}
-          to="/games/import/mapping"/>
-        <hr/>
-        <pre>{JSON.stringify(this.state.columns, null, 2)}</pre>
+        <Header
+          title="Mapping"
+          canBack={true}
+          backUrl="/games/import/columns"
+          canNext={this.canMoveNext}
+          nextUrl="/games/import/review"
+        />
+        <div className="row">
+          <div className="col-sm-6">
+            <h3>Locations</h3>
+            <Maps
+              maps={this.state.locationMaps}
+              options={this.state.locations}
+              onChange={this.handleLocationMapChange}/>
+          </div>
+          <div className="col-sm-6">
+            <h3>Teams</h3>
+            <Maps
+              maps={this.state.teamMaps}
+              options={this.teams}
+              onChange={this.handleTeamMapChange} />
+          </div>
+        </div>
       </div>
     );
   }
 }
 
-let Row = ({column, onChange}) => (
-  <tr>
-    <td>{column.pattern}</td>
-    <td>
-      <select className="form-control" value={column.property} onChange={onChange(column.pattern)}>
-        <option value=""></option>
-        {PROPERTIES.map(prop => <option value={prop}>{prop}</option>)}
-      </select>
-    </td>
-  </tr>
-)
+type OnMapChange = (key: string) => (event: any) => void;
+
+interface MapsProps {
+  maps: Map[];
+  options: any[];
+  onChange: OnMapChange
+}
+
+const Maps = (props: MapsProps) => {
+  const {
+    maps = [],
+    options = [],
+    onChange
+  } = props;
+  return (
+    <table className="table table-bordered">
+      <tbody>
+        {maps.map((map: Map)=> (
+          <tr key={map.key}>
+            <td style={{width: '50%'}}>{map.key}</td>
+            <td style={{width: '50%'}}>
+              <select className="form-control"
+                value={map.id}
+                onChange={onChange(map.key)}>
+                <option value=""></option>
+                {options.map(opt => (
+                  <option key={opt.id} value={opt.id}>{opt.name}</option>
+                ))}
+              </select>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}

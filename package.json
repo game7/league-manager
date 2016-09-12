@@ -52,6 +52,7 @@
     "bootstrap": "^3.3.7",
     "font-awesome": "^4.6.3",
     "lodash": "^4.15.0",
+    "moment": "^2.14.1",
     "object-observe": "0.0.2",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",

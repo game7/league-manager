@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
-import { IImportState, Back, Next, row, storage, Column, PROPERTIES } from './common';
+import { IImportState, Header, row, storage, Column, Properties } from './common';
 
 export function makeColumns(row: row): Column[] {
   return row.map(col => {
@@ -25,7 +25,11 @@ export default class Data extends Component<{},IImportState> {
     const columns = (this.state.columns || []);
     const columnCount = columns.length;
     const mappedCount = columns.filter(col => !!col.property).length;
-    return columnCount == 0 || columnCount !== mappedCount;
+    return columnCount > 0 && columnCount == mappedCount;
+  }
+
+  get properties(): { key: string, value: any }[] {
+    return Object.keys(Properties).map(key => { return { key: key, value: Properties[key] } });
   }
 
   handleColumnChange = (key: string) => (event: any) => {
@@ -40,57 +44,41 @@ export default class Data extends Component<{},IImportState> {
     this.setState({ columns: columns }, () => storage.save(this.state));
   }
 
-  // prepareColumnLookups = (property: string, index: number) => {
-  //   switch(property) {
-  //     case 'Home Team':
-  //     case 'Away Team':
-  //
-  //       break;
-  //     case 'Location':
-  //       this.prepareLocationLookups(index);
-  //       break;
-  //   }
-  // }
-  //
-  // prepareLocationLookups = (index: number) => {
-  //   const rows = this.state.rows;
-  //   const all = rows.map(row => row[index]);
-  //   const uniq = _.uniq(all) as string[];
-  //   const locations = uniq.map(item => ({ key: item }));
-  //   this.setState({ locations: locations });
-  // }
-
   render() {
     console.log('render', new Date())
     return (
       <div>
+        <Header
+          title="Context"
+          canBack={true}
+          backUrl="/games/import/data"
+          canNext={this.canMoveNext}
+          nextUrl="/games/import/mapping"
+        />
         <table className="table table-bordered">
           <tbody>
             {this.state.columns.map((col) => (
-              <Row column={col} key={col.pattern} onChange={this.handleColumnChange}/>
+              <Row
+                column={col}
+                key={col.pattern}
+                properties={this.properties}
+                onChange={this.handleColumnChange}
+              />
             ))}
           </tbody>
         </table>
-        <hr/>
-        <Back to="/games/import/data"/>
-        {" "}
-        <Next
-          disabled={this.canMoveNext}
-          to="/games/import/mapping"/>
-        <hr/>
-        <pre>{JSON.stringify(this.state.columns, null, 2)}</pre>
       </div>
     );
   }
 }
 
-let Row = ({column, onChange}) => (
+let Row = ({column, properties, onChange}) => (
   <tr>
     <td>{column.pattern}</td>
     <td>
       <select className="form-control" value={column.property} onChange={onChange(column.pattern)}>
         <option value=""></option>
-        {PROPERTIES.map(prop => <option value={prop}>{prop}</option>)}
+        {properties.map(prop => (<option key={prop.key} value={prop.key}>{prop.value}</option>))}
       </select>
     </td>
   </tr>
