@@ -53,6 +53,7 @@
     "font-awesome": "^4.6.3",
     "lodash": "^4.15.0",
     "moment": "^2.14.1",
+    "object-assign": "^4.1.0",
     "object-observe": "0.0.2",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
