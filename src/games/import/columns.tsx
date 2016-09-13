@@ -5,7 +5,7 @@ import { IImportState, Header, row, storage, Column, Properties } from './common
 
 function findPropertyForPattern(pattern: string): string {
   for(var key in Properties) {
-    if (Properties[key].toLowerCase().indexOf(pattern) != -1) {
+    if (Properties[key].toLowerCase().indexOf(pattern.toLowerCase()) != -1) {
       return key;
     }
   }
