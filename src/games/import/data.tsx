@@ -24,6 +24,7 @@ export default class Data extends Component<{},IImportState> {
     if(!this.state.rows) {
       this.state.rows = makeRows(this.state.file.content, this.state.delimiter);
     }
+    storage.save(this.state)
   }
 
   handleHeaderRowChange = (event) => {

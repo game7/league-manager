@@ -17,6 +17,17 @@ export function makeTeamMaps(columns: Column[], rows: row[], hasHeader: boolean)
   return maps;
 }
 
+export function findTeams(maps: Map[], teams: Team[]) : Map[] {
+  return maps.map(map => {
+    let team = teams.filter(t => t.name.toLowerCase().indexOf(map.key.toLowerCase()) != -1)[0] || ({} as Team);
+    return {
+      key: map.key,
+      id: team.id,
+      name: team.name
+    } as Map;
+  });
+}
+
 export function makeLocationMaps(columns: Column[], rows: row[], hasHeader: boolean): Map[] {
   if(hasHeader) [ , ...rows] = rows;
   const index = columns.findIndex(col => col.property == 'location');
@@ -33,7 +44,7 @@ export default class Mapping extends Component<{},IImportState> {
     this.state = Object.assign({}, storage.load());
     const { columns, rows, hasHeader } = this.state;
     if(!this.state.teamMaps) {
-      this.state.teamMaps = makeTeamMaps(columns, rows, hasHeader);
+      this.state.teamMaps = findTeams(makeTeamMaps(columns, rows, hasHeader), this.state.teams.filter(t => t.seasonId == this.state.seasonId && t.divisionId == this.state.divisionId));
     }
     if(!this.state.locationMaps) {
       this.state.locationMaps = makeLocationMaps(columns, rows, hasHeader);

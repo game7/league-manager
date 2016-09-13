@@ -3,10 +3,20 @@ import { Component } from 'react';
 import * as _ from 'lodash';
 import { IImportState, Header, row, storage, Column, Properties } from './common';
 
+function findPropertyForPattern(pattern: string): string {
+  for(var key in Properties) {
+    if (Properties[key].toLowerCase().indexOf(pattern) != -1) {
+      return key;
+    }
+  }
+  return '';
+}
+
 export function makeColumns(row: row): Column[] {
   return row.map(col => {
     return {
-      pattern: col
+      pattern: col,
+      property: findPropertyForPattern(col)
     }
   }) as Column[];
 }
@@ -16,9 +26,7 @@ export default class Data extends Component<{},IImportState> {
   constructor() {
     super();
     this.state = Object.assign({}, storage.load());
-    if(!this.state.columns) {
-      this.state.columns = makeColumns(this.state.rows[0])
-    }
+    this.state.columns = makeColumns(this.state.rows[0])
   }
 
   get canMoveNext(): boolean {
