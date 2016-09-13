@@ -48,7 +48,8 @@ export const Properties = {
   duration: 'Duration',
   homeTeam: 'Home Team',
   awayTeam: 'Away Team',
-  location: 'Location'
+  location: 'Location',
+  unused: 'Not Used'
 };
 
 export const storage = {
