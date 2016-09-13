@@ -111,15 +111,14 @@ export default class Review extends Component<{},IReviewState> {
         }
       })
     }
-    Store.createGames(payload).then(
-      (response) => {
-        alert('Games have been posted');
-      },
-      (error) => {
-        alert(error);
-        this.setState({ isProcessing: false });
-      }
-    )
+    Store.createGames(payload).then(response => {
+        if(response['ok']) {
+          alert('Games have been posted');
+        } else {
+          alert('Oops!  Something didn\'t go right...');
+          this.setState({ isProcessing: false });
+        }
+    })
   }
 
   render() {
