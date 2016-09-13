@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
 import { IImportState, Header, row, storage, Map, Column, Properties } from './common';
-import { Store, Team, Location, Game } from '../store';
+import { Store, Team, Location, GameUpload } from '../store';
 import * as moment from 'moment';
 
 const getTeam = function(){
@@ -29,7 +29,7 @@ const getLocation = function(){
   }
 }();
 
-export function makeGames(state: IReviewState): Game[] {
+export function makeGames(state: IReviewState): GameUpload[] {
   let { rows, hasHeader, teams, locations } = state;
   if(hasHeader) [ , ...rows] = rows;
 
@@ -53,7 +53,6 @@ export function makeGames(state: IReviewState): Game[] {
     });
     return item;
   });
-  console.log('data', data);
   // get mapped value
   const games = data.map((item: any) => {
     return {
@@ -61,18 +60,18 @@ export function makeGames(state: IReviewState): Game[] {
       duration: item.duration,
       location: getLocation(locations, item.location.id),
       homeTeam: getTeam(teams, item.homeTeam.id),
-      awayTeam: getTeam(teams, item.awayTeam.id)
-    } as Game;
+      awayTeam: getTeam(teams, item.awayTeam.id),
+      selected: true
+    } as GameUpload;
   });
-
-  console.log('games', games);
 
   return games
 
 }
 
 interface IReviewState extends IImportState {
-  games?: Game[]
+  games?: GameUpload[],
+  isProcessing?: boolean
 }
 
 export default class Review extends Component<{},IReviewState> {
@@ -82,6 +81,45 @@ export default class Review extends Component<{},IReviewState> {
     this.state = Object.assign({}, storage.load());
     const { columns, rows, hasHeader } = this.state;
     this.state.games = makeGames(this.state);
+  }
+
+  handleGameToggle = (id: string) => () => {
+    let games = Object.assign({}, this.state.games);
+    this.setState({
+      games: games.map(g => {
+        if(g.id == id) { g.selected = !g.selected }
+        return g;
+      })
+    })
+
+  }
+
+  handleCreateGames = () => {
+    this.setState({ isProcessing: true });
+    const { leagueId, seasonId, divisionId } = this.state;
+    let payload = {
+      game: this.state.games.map(g => {
+        return {
+          programId: leagueId,
+          seasonId: seasonId,
+          divisionId: divisionId,
+          startsOn: g.startsOn,
+          duration: g.duration,
+          homeTeamId: g.homeTeam.id,
+          awayTeamId: g.awayTeam.id,
+          locationId: g.location.id
+        }
+      })
+    }
+    Store.createGames(payload).then(
+      (response) => {
+        alert('Games have been posted');
+      },
+      (error) => {
+        alert(error);
+        this.setState({ isProcessing: false });
+      }
+    )
   }
 
   render() {
@@ -96,23 +134,31 @@ export default class Review extends Component<{},IReviewState> {
         <table className="table table-bordered table-striped">
           <thead>
             <tr>
+              <th></th>
               <th>Date / Time</th>
               <th>Location</th>
               <th>Home</th>
               <th>Away</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             {this.state.games.map((g, i)=> (
               <tr key={i}>
+                <td style={{textAlign: 'center'}}>
+                  <input type="checkbox" checked={g.selected} onChange={this.handleGameToggle(g.id)}/>
+                </td>
                 <td>{moment(new Date(g['startsOn'])).format('ddd M/D/YY h:mma').replace('m','')}</td>
                 <td>{g['location']['name']}</td>
                 <td>{g['homeTeam']['name']}</td>
                 <td>{g['awayTeam']['name']}</td>
+                <td></td>
               </tr>
             ))}
           </tbody>
         </table>
+        <button className="btn btn-primary" onClick={this.handleCreateGames}>Create Games</button>
+        <p style={{height: 20}}> </p>
       </div>
     );
   }

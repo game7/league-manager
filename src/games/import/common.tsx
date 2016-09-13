@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from 'react-router'
-import { League, Season, Division, Team, Location } from '../store';
+import { Tenant, League, Season, Division, Team, Location } from '../store';
 
 export type cell = string;
 export type row = cell[]
@@ -11,6 +11,7 @@ interface IFile {
 }
 
 export interface IImportState {
+  tenant?: Tenant,
   leagueId?: string,
   seasonId?: string,
   divisionId?: string,
@@ -22,6 +23,7 @@ export interface IImportState {
   columns? : Column[];
   teamMaps?: Map[];
   locationMaps?: Map[];
+  tenants?: Tenant[];
   leagues?: League[];
   seasons?: Season[];
   divisions?: Division[];

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Component } from 'react';
 import * as _ from 'lodash';
 import { IImportState, Header, row, storage, Map, Column } from './common';
-import { Store, League, Season, Division } from '../store';
+import { Tenant, Store, League, Season, Division } from '../store';
 
 export function makeColumns(row: row): Column[] {
   return row.map(col => {
