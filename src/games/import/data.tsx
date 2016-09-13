@@ -10,7 +10,7 @@ export function findDelimiter(content: string): string {
 }
 
 export function makeRows(content: string, delimiter: string): row[] {
-  return content.replace('\r','').split('\n').map(row => row.split(delimiter));
+  return content.replace('\r','').split('\n').filter(row => row != '').map(row => row.split(delimiter));
 }
 
 export default class Data extends Component<{},IImportState> {
