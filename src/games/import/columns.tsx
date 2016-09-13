@@ -27,6 +27,7 @@ export default class Data extends Component<{},IImportState> {
     super();
     this.state = Object.assign({}, storage.load());
     this.state.columns = makeColumns(this.state.rows[0])
+    storage.save(this.state);
   }
 
   get canMoveNext(): boolean {

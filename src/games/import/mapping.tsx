@@ -49,6 +49,7 @@ export default class Mapping extends Component<{},IImportState> {
     if(!this.state.locationMaps) {
       this.state.locationMaps = makeLocationMaps(columns, rows, hasHeader);
     }
+    storage.save(this.state);
   }
 
   componentDidMount() {
