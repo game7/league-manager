@@ -123,6 +123,10 @@ export default class Review extends Component<{},IReviewState> {
   }
 
   render() {
+    let buttonCss = ['btn', 'btn-primary'];
+    if(this.state.isProcessing) {
+      buttonCss.push('disabled');
+    }
     return (
       <div>
         <Header
@@ -131,33 +135,35 @@ export default class Review extends Component<{},IReviewState> {
           backUrl="/games/import/mapping"
           canNext={false}
         />
+        <p>
+          <em>Scroll to review and submit</em>
+        </p>
         <table className="table table-bordered table-striped">
           <thead>
             <tr>
-              <th></th>
               <th>Date / Time</th>
               <th>Location</th>
               <th>Home</th>
               <th>Away</th>
-              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             {this.state.games.map((g, i)=> (
               <tr key={i}>
+                {/*
                 <td style={{textAlign: 'center'}}>
                   <input type="checkbox" checked={g.selected} onChange={this.handleGameToggle(g.id)}/>
                 </td>
+                */}
                 <td>{moment(new Date(g['startsOn'])).format('ddd M/D/YY h:mma').replace('m','')}</td>
                 <td>{g['location']['name']}</td>
                 <td>{g['homeTeam']['name']}</td>
                 <td>{g['awayTeam']['name']}</td>
-                <td></td>
               </tr>
             ))}
           </tbody>
         </table>
-        <button className="btn btn-primary" onClick={this.handleCreateGames}>Create Games</button>
+        <button className={buttonCss.join(' ')} onClick={this.handleCreateGames}>Create Games</button>
         <p style={{height: 20}}> </p>
       </div>
     );

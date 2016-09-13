@@ -61,7 +61,7 @@ export const Back = (props: { disabled?: boolean, to?: string }) => {
   if(props.disabled) css.push('disabled');
   return (
     <Link className={css.join(' ')} to={props.to || ""}>
-      <i className="fa fa-chevron-left"/>{" "}Back
+      <i className="fa fa-backward"/>{" "}Back
     </Link>
   )
 }
@@ -71,7 +71,7 @@ export const Next = (props: { disabled?: boolean, to?: string }) => {
   if(props.disabled) css.push('disabled');
   return (
     <Link className={css.join(' ')} to={props.to || ""}>
-      Next{" "}<i className="fa fa-chevron-right"/>
+      Next{" "}<i className="fa fa-forward"/>
     </Link>
   )
 }
@@ -97,15 +97,16 @@ export const Header = (props: HeaderProps) => {
     <h1 className="page-header">
       {props.title}
       <div style={styles.buttons}>
-        <Back
-          disabled={!props.canBack}
-          to={props.backUrl}
-        />
-        {" "}
-        <Next
-          disabled={!props.canNext}
-          to={props.nextUrl}
-        />
+        <div className="btn-group">
+          <Back
+            disabled={!props.canBack}
+            to={props.backUrl}
+          />
+          <Next
+            disabled={!props.canNext}
+            to={props.nextUrl}
+          />
+        </div>
       </div>
       <div style={styles.clearfix} />
     </h1>

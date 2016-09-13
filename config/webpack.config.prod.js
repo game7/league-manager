@@ -121,7 +121,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('production'),
-        'API_BASE': JSON.stringify('https://www.styfl.com')
+        'API_BASE': JSON.stringify('https://styfl.sportified.net/')
       }
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),

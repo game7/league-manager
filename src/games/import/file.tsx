@@ -21,7 +21,13 @@ export default class File extends Component<{},IImportState> {
           file: {
             name: file.name,
             content: e.target.result
-          }
+          },
+          delimiter: undefined,
+          hasHeader: undefined,
+          rows: undefined,
+          columns: undefined,
+          teamMaps: undefined,
+          locationMaps: undefined
         }, () => storage.save(this.state));
       };
       reader.readAsText(file);
