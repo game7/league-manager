@@ -103,7 +103,7 @@ export default class Review extends Component<{},IReviewState> {
           programId: leagueId,
           seasonId: seasonId,
           divisionId: divisionId,
-          startsOn: g.startsOn,
+          startsOn: moment(new Date(g.startsOn)).format('M/D/YY h:mm a'),
           duration: g.duration,
           homeTeamId: g.homeTeam.id,
           awayTeamId: g.awayTeam.id,
