@@ -5,12 +5,14 @@ import { Router, Route, IndexRoute,
 
 import App from './app';
 import { default as games } from './games';
+import { default as leagues } from './leagues';
 
 export default () => (
   <Router history={hashHistory}>
     <Route path="/" component={App}>
       <IndexRedirect to="/games" />
       {games}
+      {leagues}
     </Route>
   </Router>
 );
