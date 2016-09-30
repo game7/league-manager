@@ -32,6 +32,12 @@ export function makePlayers(state: IReviewState): PlayerUpload[] {
         case 'team':
           item[key] = state.teamMaps.filter(map => map.key == row[i])[0];
           break;
+        case 'email':
+          if(row[i]) item[key] = row[i].trim().toLowerCase();
+          break;
+        case 'position':
+          if(row[i]) item[key] = row[i].trim().toUpperCase()[0];
+          break;
         default:
           item[key] = row[i];
       }
@@ -76,7 +82,6 @@ class Review extends Component<IReviewProps,IReviewState> {
   }
 
   handleCompleted = () => {
-    debugger;
     this.setState({
       file: undefined,
       delimiter: undefined,
@@ -104,13 +109,16 @@ class Review extends Component<IReviewProps,IReviewState> {
         }
       })
     }
-    Store.createPlayers(payload).then(response => {
+    Store.createPlayers(payload).then((response) => {
         if(response['ok']) {
           alert('That Worked!');
           this.setState({ isCompleted: true })
         } else {
-          alert('Oops!  Something didn\'t go right...');
-          this.setState({ isProcessing: false });
+          response['text']().then(text => {
+            alert(`Oops!  Something didn\'t go right...\n\n${text}`);
+            this.setState({ isProcessing: false });
+          })
+
         }
     })
   }
