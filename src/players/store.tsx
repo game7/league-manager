@@ -54,42 +54,42 @@ export interface PlayerUpload {
 export class Store {
 
   static tenants(): Promise<League[]> {
-    return fetch(process.env.API_BASE + '/api/league/tenants')
+    return fetch(process.env.API_BASE + 'api/league/tenants')
       .then(response => {
         return response.json().then(data => data['tenants'] as Promise<Tenant[]>);
       });
   }
 
   static leagues(): Promise<League[]> {
-    return fetch(process.env.API_BASE + '/api/league/programs')
+    return fetch(process.env.API_BASE + 'api/league/programs')
       .then(response => {
         return response.json().then(data => data['leagues'] as Promise<League[]>);
       });
   }
 
   static seasons(): Promise<Season[]> {
-    return fetch(process.env.API_BASE + '/api/league/seasons')
+    return fetch(process.env.API_BASE + 'api/league/seasons')
       .then(response => {
         return response.json().then(data => data['seasons'] as Promise<Season[]>);
       });
   }
 
   static divisions(): Promise<Division[]> {
-    return fetch(process.env.API_BASE + '/api/league/divisions')
+    return fetch(process.env.API_BASE + 'api/league/divisions')
       .then(response => {
         return response.json().then(data => data['divisions'] as Promise<Division[]>);
       });
   }
 
   static teams(): Promise<Team[]> {
-    return fetch(process.env.API_BASE + '/api/league/teams')
+    return fetch(process.env.API_BASE + 'api/league/teams')
       .then(response => {
         return response.json().then(data => data['teams'] as Promise<Division[]>);
       });
   }
 
   static createPlayers(players: any): Promise<any[]> {
-    return fetch(process.env.API_BASE + '/api/league/players/batch_create', {
+    return fetch(process.env.API_BASE + 'api/league/players/batch_create', {
       method: 'POST',
       body: JSON.stringify(players),
       headers: {
