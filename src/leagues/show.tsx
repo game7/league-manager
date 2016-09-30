@@ -119,11 +119,17 @@ function Divisions( props: { divisions: Division[], teams: Team[] }) {
 
 function DivisionPanel(props: { division: Division, teams: Team[] }) {
   const { division, teams = [] } = props;
+  const styles = {
+    actions: {
+      marginTop: -5,
+      marginRight: -10
+    }
+  };
   return(
     <div className="panel panel-default">
       <div className="panel-heading">
         {division.name}
-        <div className="pull-right">
+        <div className="pull-right" style={styles.actions}>
           <button type="button" className="btn btn-sm btn-default">
             <i className="fa fa-gear"/>{" "}Settings
           </button>
