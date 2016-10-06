@@ -38,6 +38,9 @@ export function makePlayers(state: IReviewState): PlayerUpload[] {
         case 'position':
           if(row[i]) item[key] = row[i].trim().toUpperCase()[0];
           break;
+        case 'substitute':
+          item[key] = (row[i] && row[i].toLowerCase() == 'true');
+          break;
         default:
           item[key] = row[i];
       }
@@ -171,7 +174,7 @@ class Review extends Component<IReviewProps,IReviewState> {
                 <td>{g['birthdate'] ? moment(new Date(g['birthdate'])).format('M/D/YY').replace('m','') : ''}</td>
                 <td>{g['email']}</td>
                 <td>{g['position']}</td>
-                <td>{g['substitute']}</td>
+                <td>{g['substitute'] ? 'X' : ''}</td>
               </tr>
             ))}
           </tbody>
