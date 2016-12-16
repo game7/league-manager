@@ -58,51 +58,47 @@ export interface GameUpload {
   completed: boolean;
 }
 
+const unwrap = (response: Response) => response.json();
+
 export class Store {
 
-  static tenants(): Promise<League[]> {
+  static tenants() {
     return fetch(process.env.API_BASE + '/api/league/tenants')
-      .then(response => {
-        return response.json().then(data => data['tenants'] as Promise<Tenant[]>);
-      });
+      .then(response => response.json())
+      .then(data => data['tenants'] as Tenant[]);
   }
 
   static leagues(): Promise<League[]> {
     return fetch(process.env.API_BASE + '/api/league/programs')
-      .then(response => {
-        return response.json().then(data => data['leagues'] as Promise<League[]>);
-      });
+      .then(response => response.json())
+      .then(data => data['leagues'] as Promise<League[]>);
   }
 
-  static seasons(): Promise<Season[]> {
+  static seasons() {
     return fetch(process.env.API_BASE + '/api/league/seasons')
-      .then(response => {
-        return response.json().then(data => data['seasons'] as Promise<Season[]>);
-      });
+      .then(unwrap)
+      .then(data => data['seasons'] as Season[]);
   }
 
-  static divisions(): Promise<Division[]> {
+  static divisions() {
     return fetch(process.env.API_BASE + '/api/league/divisions')
-      .then(response => {
-        return response.json().then(data => data['divisions'] as Promise<Division[]>);
-      });
+      .then(unwrap)
+      .then(data => data['divisions'] as Division[]);
   }
 
-  static teams(): Promise<Team[]> {
+  static teams() {
     return fetch(process.env.API_BASE + '/api/league/teams')
-      .then(response => {
-        return response.json().then(data => data['teams'] as Promise<Division[]>);
-      });
+      .then(unwrap)
+      .then(data => data['teams'] as Team[]);
   }
 
-  static locations(): Promise<Location[]> {
+  static locations() {
     return fetch(process.env.API_BASE + '/api/locations')
-      .then(response => {
-        return response.json().then(data => data['locations'] as Promise<Location[]>);
-      });
+      .then(unwrap)
+      .then(data => data['locations'] as Location[]);
   }
 
-  static createGames(games: any): Promise<any[]> {
+  static createGames(games: any) {
     return fetch(process.env.API_BASE + '/api/league/games/batch_create', {
       method: 'POST',
       body: JSON.stringify(games),

@@ -4,6 +4,7 @@
   "private": true,
   "devDependencies": {
     "autoprefixer": "6.3.7",
+    "awesome-typescript-loader": "^3.0.0-beta.17",
     "babel-core": "6.11.4",
     "babel-eslint": "6.1.2",
     "babel-loader": "6.2.4",
@@ -39,6 +40,7 @@
     "react-hot-loader": "^3.0.0-beta.1",
     "rimraf": "2.5.4",
     "shelljs": "^0.7.4",
+    "source-map-loader": "^0.1.5",
     "style-loader": "0.13.1",
     "ts-loader": "^0.8.2",
     "typescript": "^2.1.0-dev.20160818",
@@ -49,6 +51,12 @@
   },
   "homepage": "http://game7.github.io/league-manager",
   "dependencies": {
+    "@types/lodash": "^4.14.43",
+    "@types/moment": "^2.13.0",
+    "@types/react": "^0.14.55",
+    "@types/react-dom": "^0.14.19",
+    "@types/react-router": "^2.0.41",
+    "@types/whatwg-fetch": "0.0.33",
     "bootstrap": "^3.3.7",
     "font-awesome": "^4.6.3",
     "lodash": "^4.15.0",

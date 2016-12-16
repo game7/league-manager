@@ -104,7 +104,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify('development'),
-        'API_BASE': JSON.stringify('http://localhost:3000')
+        'API_BASE': JSON.stringify('http://localhost:3000/')
       }
     }),
     // Note: only CSS is currently hot reloaded
