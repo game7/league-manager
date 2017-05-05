@@ -100,14 +100,14 @@ export default class Review extends Component<{},IReviewState> {
     let payload = {
       game: this.state.games.map(g => {
         return {
-          programId: leagueId,
-          seasonId: seasonId,
-          divisionId: divisionId,
-          startsOn: moment(new Date(g.startsOn)).format('M/D/YY h:mm a'),
+          program_id: leagueId,
+          season_id: seasonId,
+          division_id: divisionId,
+          starts_on: moment(new Date(g.startsOn)).format('M/D/YY h:mm a'),
           duration: g.duration,
-          homeTeamId: g.homeTeam.id,
-          awayTeamId: g.awayTeam.id,
-          locationId: g.location.id
+          home_team_id: g.homeTeam.id,
+          away_team_id: g.awayTeam.id,
+          location_id: g.location.id
         }
       })
     }
