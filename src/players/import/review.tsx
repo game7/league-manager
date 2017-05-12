@@ -101,10 +101,10 @@ class Review extends Component<IReviewProps,IReviewState> {
     let payload = {
       player: this.state.players.map(g => {
         return {
-          firstName: g.firstName,
-          lastName: g.lastName,
-          teamId: g.team.id,
-          jerseyNumber: g.jerseyNumber,
+          first_name: g.firstName,
+          last_name: g.lastName,
+          team_id: g.team.id,
+          jersey_number: g.jerseyNumber,
           email: g.email ? g.email.toLowerCase() : null,
           birthdate: g.birthdate ? moment(new Date(g.birthdate)).format('M/D/YY') : null,
           position: g.position,
